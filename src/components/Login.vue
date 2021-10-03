@@ -81,7 +81,6 @@ export default {
             duration: "1000"
           })
           this.$message.success("登录成功")
-          console.log(res)
 
           // 我们将从服务器获取的token保存在 sessionStorage 中
           window.sessionStorage.setItem("token", res.data.token)
