@@ -60,7 +60,7 @@
           <el-table-column label="操作" width="200">
             <template scope="scope">
               <el-button @click="openUpdateUser(scope.row.id)" type="primary" icon="el-icon-edit" size="mini"></el-button>
-              <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
+              <el-button @click="removeUserById(scope.row)" type="danger" icon="el-icon-delete" size="mini"></el-button>
               <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
                 <el-button type="warning" icon="el-icon-share" size="mini"></el-button>
               </el-tooltip>
@@ -142,7 +142,7 @@
 
         <span slot="footer" class="dialog-footer">
           <el-button @click="updateDialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="updateDialogVisible = false">确定</el-button>
+          <el-button type="primary" @click="editUserInfo">确定</el-button>
         </span>
       </el-dialog>
 
@@ -253,7 +253,7 @@ export default {
         // 当前页码
         pagenum: 1,
         // 一页显示多少条数据
-        pagesize: 2
+        pagesize: 5
       },
 
       // 查询到的用户信息对象 这个对象不赋值初始值的原因是当点击对话框时发起了数据请求 请求结果保存在这里对象中了
@@ -276,6 +276,61 @@ export default {
   },
 
   methods: {
+    // 根据id删除对应的用户信息
+    async removeUserById(row) {
+      // 先弹框进行提示
+      let res = await this.$confirm(`此操作将永久删除 ${row.username}, 是否继续?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).catch(err => err)
+
+      if(res !== "confirm") {
+        return  this.$message.info("已经取消删除")
+      } 
+    },
+   
+
+    // 编辑按钮 中的对话框的确定按钮事件 
+    editUserInfo() {
+      // 我们在这里进行修改用户信息 填写的数据的预校验 与 提交
+      this.$refs.updateFormRef.validate( async (valid) => {
+        if(!valid) return
+
+        // 发起修改请求
+        // updateForm 这个对象是我们打开编辑用户信息的按钮是 请求回来的该行这个人的数据 里面有id
+        let {data: res} = await request({
+          url: `users/${this.updateForm.id}`,
+          method: "put",
+          data: {
+            email: this.updateForm.email,
+            mobile: this.updateForm.mobile
+          } 
+        })
+        if(res.meta.status !== 200) {
+          this.$message({
+            type: "error",
+            message: "用户更新失败",
+            duration: 1000
+          })
+          return
+        }
+
+        // 先关闭对话框
+        this.updateDialogVisible = false;
+
+         // 刷新数据列表
+        this.getUsersList()
+
+        // 提示修改成功
+        this.$message({
+          type: "success",
+          message: "用户数据更新成功",
+          duration: 1000
+        })
+      })
+    },
+
     // 当关闭 编辑用户 按钮展示的对话框的时候 重置信息
     updataFormClose() {
       this.$refs.updateFormRef.resetFields()
