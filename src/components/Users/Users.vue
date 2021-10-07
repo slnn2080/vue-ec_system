@@ -287,7 +287,30 @@ export default {
 
       if(res !== "confirm") {
         return  this.$message.info("已经取消删除")
-      } 
+      }
+
+      let {data: resMsg} = await request({
+        url: `users/${row.id}`,
+        method: "delete"
+      })
+
+      if(resMsg.meta.status !== 200) {
+        this.$message({
+          type: "error",
+          message: "用户删除失败",
+          duration: 1000
+        })
+        return
+      }
+
+      this.$message({
+        type: "success",
+        message: "用户删除成功",
+        duration: 1000
+      })
+
+      // 删除成功后要刷新列表
+      this.getUsersList()
     },
    
 
