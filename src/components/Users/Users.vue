@@ -40,7 +40,7 @@
         >
           <el-table-column type="index" label="序号" align="center"></el-table-column>
           <el-table-column 
-            v-for="item of this.columnData" 
+            v-for="item of columnData" 
             :key="item.id" 
             v-bind="item"
           >
@@ -62,7 +62,11 @@
               <el-button @click="openUpdateUser(scope.row.id)" type="primary" icon="el-icon-edit" size="mini"></el-button>
               <el-button @click="removeUserById(scope.row)" type="danger" icon="el-icon-delete" size="mini"></el-button>
               <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
-                <el-button type="warning" icon="el-icon-share" size="mini"></el-button>
+                <el-button 
+                  type="warning" 
+                  icon="el-icon-share" 
+                  size="mini" 
+                  @click="setRole(scope.row)"></el-button>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -145,8 +149,34 @@
           <el-button type="primary" @click="editUserInfo">确定</el-button>
         </span>
       </el-dialog>
+      <!-- 分配角色的对话框 -->
+      <el-dialog
+        title="分配角色"
+        :visible.sync="setRoleDialogVisible"
+        width="50%"
+        @close="setRoleDialogClosed"
+      >
+        <div>
+          <p>当前用户：{{userInfo.username}}</p>
+          <p>当前角色：{{userInfo.role_name}}</p>
+          <p>
+            <span>分配新角色：</span>
+            <el-select v-model="selectedRoleId" placeholder="请选择">
+              <el-option
+                v-for="item in rolesList"
+                :key="item.id"
+                :label="item.roleName"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </p>
+        </div>
 
-
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="saveRoleInfo">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-card>
   </div>
   
@@ -157,7 +187,6 @@ import {request} from "../../network/request"
 export default {
   name: "User",
   data() {
-
     // 定义 添加用户 时的校验规则
     let checkMail = (rule, value, callback) => {
       let reg = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/
@@ -182,6 +211,12 @@ export default {
     }
 
     return {
+      // 分配按钮里的下拉菜单 选中的角色id
+      selectedRoleId: "",
+
+      // 控制分配角色的对话框控制显示与否变量
+      setRoleDialogVisible: false,
+
       // 添加用户的表单数据
       addForm:{
         username: "",
@@ -271,11 +306,80 @@ export default {
           {required: true, message: "请输入邮箱", trigger: "blur"},
           {validator: checkMobile, trigger: "blur"}
         ]
-      }
+      },
+
+      // 点击分配角色按钮后 保存的该行用户信息
+      userInfo:{},
+      // 所有角色的数据列表
+      rolesList: []
     }
   },
 
   methods: {
+    // 监听分配角色对话框 关闭事件
+    setRoleDialogClosed() {
+      this.selectedRoleId = ""
+      this.userInfo = {}
+    },
+
+    // 点击 分配角色 按钮里面的 确定按钮 分配角色
+    async saveRoleInfo() {
+      // 证明用户没有选择新的角色
+      if(!this.selectedRoleId) {
+        this.$message({
+          type: "error",
+          message: "请选择要分配的角色",
+          duration: 1000
+        })
+      }
+
+
+      // 如果没有return出去代表用户选择了一个角色 那我们就要发起请求
+      let {data: res} = await request({
+        url: `users/${this.userInfo.id}/role`,
+        method: "put",
+        data: {rid: this.selectedRoleId}
+      })
+      console.log(res)
+      if(res.meta.status !== 200) {
+        this.$message({
+          type: "error",
+          message: "更新用户角色失败",
+          duration: 1000
+        })
+      }
+
+      this.$message({
+        type: "success",
+        message: "更新用户角色成功",
+        duration: 1000
+      })
+      this.getUsersList()
+      this.setRoleDialogVisible = false
+    },
+
+
+    // 展示分配角色的对话框
+    async setRole(userInfo) {
+      this.userInfo = userInfo
+      // 在展示对话框前，获取所有角色的列表
+      let {data: res} = await request({
+        url: "roles",
+        method: "get"
+      })
+
+      if(res.meta.status !== 200) {
+        this.$message({
+          type: "error",
+          message: "权限列表刷新失败",
+          duration: 1000
+        })
+      }
+
+      this.rolesList = res.data
+      this.setRoleDialogVisible = true
+    },
+
     // 根据id删除对应的用户信息
     async removeUserById(row) {
       // 先弹框进行提示

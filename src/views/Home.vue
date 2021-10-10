@@ -3,8 +3,8 @@
     <!-- 头部区域 -->
     <el-header class="logout-header">
       <div>
-        <i class="el-icon-setting logo-icon"></i>
-        <span>电商后台管理系统</span>
+        <i class="el-icon-s-shop logo-icon"></i>
+        <span>轻 "商" 管理</span>
       </div>
       <div>
         <el-button class="logout-btn" size="small" v-on=""@click="logout">Logout</el-button>
@@ -20,9 +20,9 @@
           <i class="el-icon-lollipop hvr-bounce-in" @click="toggleMenu"></i>
         </div>
         <el-menu
-          background-color="#5C7AEA"
-          text-color="#fff"
-          active-text-color="#ffd04b"
+          background-color="#BFB400"
+          text-color="#212121"
+          active-text-color="#FFFABF"
           :unique-opened="true"
           :collapse="isCollapse"
           :collapse-transition="false"
@@ -120,15 +120,16 @@ export default {
 <style lang="less" scoped>
 
 .logout-header {
-  background-color: #0b297cdc;
+  background: rgb(64,60,0);
+  background: linear-gradient(171deg, rgba(64,60,0,1) 0%, rgba(0,0,0,1) 23%, rgba(255,251,191,1) 100%);
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: #fff;
 
   .logout-btn {
-    background-color:#5C7AEA ;
-    color:#fff;
+    background-color:#FFF440 ;
+    color:#212121;
   }
 
   >div:first-child {
@@ -140,7 +141,8 @@ export default {
       position: relative;
 
       + span {
-        font-size:22px;
+        margin-left: 10px;
+        font-size:20px;
       }
     }
   }
@@ -151,9 +153,10 @@ export default {
 }
 
 .el-aside {
-  background-color: #3D56B2;
+  background: rgb(136,128,8);
+  background: linear-gradient(156deg, rgba(136,128,8,1) 0%, rgba(255,255,255,1) 46%, rgba(191,180,0,1) 100%);
   .menu-icon-color {
-    color: #fff;
+    color: #212121;
     margin-right: 10px;
     font-size:16px;
   }
@@ -166,14 +169,15 @@ export default {
     height: 30px;
     text-align: center;
     line-height: 30px;
-    color:#ffd04b;
+    color:#ffffff;
     font-weight: 600;
-    background-color: #3D56B2;
+    background-color: #403C00;
     font-size: 18px;
   }
 }
 .el-main {
-  background-color: #E6E6E6;
+  background: rgb(255,253,230);
+  background: linear-gradient(325deg, rgba(255,253,230,1) 0%, rgba(255,255,255,1) 100%);
   margin-left: 5px;
   padding:30px;
 }
