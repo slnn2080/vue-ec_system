@@ -340,7 +340,7 @@ export default {
         method: "put",
         data: {rid: this.selectedRoleId}
       })
-      console.log(res)
+      
       if(res.meta.status !== 200) {
         this.$message({
           type: "error",

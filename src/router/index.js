@@ -6,6 +6,7 @@ import Home from "../views/Home.vue"
 import Users from "../components/Users/Users.vue"
 import Rights from "../components/Roles/Rights.vue"
 import Roles from "../components/Roles/Roles.vue"
+import GoodsCategory from "../components/Goods/GoodsCategory.vue"
 
 Vue.use(Router)
 
@@ -38,6 +39,10 @@ const routes = [
       {
         path:"/roles",
         component: Roles
+      },
+      {
+        path:"/categories",
+        component: GoodsCategory
       }
     ]
   },
