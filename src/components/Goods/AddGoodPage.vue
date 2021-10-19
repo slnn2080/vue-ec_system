@@ -265,7 +265,6 @@ export default {
         })
 
         if(res.meta.status !== 201) {
-          console.log("进入这里了么");
           this.$message.error("添加商品失败")
           return
         }
