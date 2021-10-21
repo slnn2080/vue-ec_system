@@ -37,7 +37,6 @@
           :data="userList"
           border
           stripe
-          :cell-style="test"
         >
           <el-table-column type="index" label="序号" align="center"></el-table-column>
           <el-table-column 
@@ -318,10 +317,7 @@ export default {
   },
 
   methods: {
-    // 表头行的样式测试：
-    // test() {
-    //   return "background: yellow;"
-    // },
+
     // 监听分配角色对话框 关闭事件
     setRoleDialogClosed() {
       this.selectedRoleId = ""
@@ -625,14 +621,5 @@ export default {
 
   .el-pagination {
     margin-top: 24px;
-  }
-
-  .test {
-    background-color: red;
-  }
-
-  .testtest {
-    text-align: right;
-    background-color: red !important;
   }
 </style>
